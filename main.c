@@ -16,7 +16,8 @@ void lemin_init(t_lem *lemin)
     lemin->end_flag = 0;
     lemin->room = NULL;
     lemin->room_input = 0;
-    lemin->routes = NULL;
+    lemin->route = NULL;
+	lemin->route_qnt = 0;
 }
 
 int    compose_route(t_lem *lem, char *line, char *delim)
@@ -70,6 +71,7 @@ int make_routes(t_lem *lem)
     int i;
     int routes;
     int j;
+    t_route *new_route;
 
     i = 0;
     j = 0;
@@ -88,19 +90,79 @@ int make_routes(t_lem *lem)
     lem->original_routes[routes] = 0;
     while (i < routes)
     {
-        lem->original_routes[i] = ft_strsplit(lem->separate_routes[i], ' ');
+        new_route = (t_route *)malloc(sizeof(t_route));
+        new_route->room = ft_strsplit(lem->separate_routes[i], ' ');
+        j = 0;
+        while (new_route->room[j] != 0)
+            j++;
+        new_route->len = j;
+        route_realloc(lem, new_route);
+        lem->route_qnt++;
         i++;
     }
     i = 0;
-    while (lem->original_routes[i] != 0)
+    while (lem->route[i] != 0)
     {
         ft_printf("%d : \n", i);
         j = 0;
-        while (lem->original_routes[i][j] != 0)
-            ft_printf("%s\n", lem->original_routes[i][j++]);
-        i++;
+        while (lem->route[i]->room[j] != 0)
+            ft_printf("%s\n", lem->route[i]->room[j++]);
+		i++;
     }
     return (0);
+}
+
+int move_ants(t_lem *lem)
+{
+	int i;
+	int j;
+	int route_len;
+	int input = 0;
+
+	route_len = lem->route[0]->len;
+	lem->route[0]->route_map = (int *)malloc(sizeof(int) * route_len);
+	ft_memset(lem->route[0]->route_map, 0, sizeof(int) * route_len);
+	while (lem->ant_qnt + lem->route[0]->len > 0)
+	{
+		i = 0;
+		while (i < lem->route[0]->len)
+		{
+			if (lem->route[0]->route_map[0] == 0 && lem->ant_qnt > 0)
+			{
+				lem->route[0]->route_map[0] = 1;
+			}
+			else
+			{
+				if (lem->route[0]->route_map[i] > 0)
+					lem->route[0]->route_map[i]++;
+				if (i + 1 <  lem->route[0]->len)
+					if (lem->route[0]->route_map[i] > 0 && lem->route[0]->route_map[i + 1] == 0)
+					{
+						lem->route[0]->route_map[i + 1] = 1;
+						input = 1;
+					}
+			}
+			if (input == 1)
+			{
+				input = 0;
+				break ;
+			}
+			i++;
+			ft_printf("___________________________________\n");
+		}
+		j = 0;
+		while (j < lem->route[0]->len)
+		{
+			ft_printf("%d ", lem->route[0]->route_map[j]);
+			j++;
+		}
+		ft_printf("\n");
+
+		if (lem->ant_qnt > 0)
+			lem->ant_qnt--;
+		if (lem->ant_qnt == 0)
+			route_len--;
+	}
 }
 
 
@@ -146,5 +208,6 @@ int main()
     lead_ants(&lemin.start, &lemin);
     make_routes(&lemin);
     ft_printf("%s\n", lemin.routes);
+	move_ants(&lemin);
     return (0);
 }

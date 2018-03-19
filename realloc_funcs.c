@@ -95,3 +95,43 @@ int room_realloc(t_lem *lem, t_room *add)
     }
     return (0);
 }
+
+static int route_add(t_lem *lem, t_route *add, t_route **tmp, int i)
+{
+    if (!(tmp = (t_route **)malloc((sizeof(t_route *)) * (lem->route_qnt + 1))))
+        return (1);
+    tmp[lem->route_qnt] = 0;
+    while (lem->route[++i] != 0)
+        tmp[i] = lem->route[i];
+    if (!(lem->route = (t_route **)malloc((sizeof(t_route *)) * \
+    (lem->route_qnt + 1 + 1))))
+        return (1);
+    lem->route[lem->route_qnt + 1] = 0;
+    i = -1;
+    while (tmp[++i] != 0)
+        lem->route[i] = tmp[i];
+    lem->route[i] = add;
+    free(tmp);
+    return (0);
+}
+
+int route_realloc(t_lem *lem, t_route *add)
+{
+    t_route **tmp;
+    int i;
+
+    i = -1;
+    if (lem->route != NULL)
+    {
+        if (route_add(lem, add, tmp, i))
+            return (1);
+    }
+    else
+    {
+        if (!(lem->route = (t_route **)malloc(sizeof(t_route *) * 2)))
+            return (1);
+        lem->route[1] = NULL;
+        lem->route[0] = add;
+    }
+    return (0);
+}

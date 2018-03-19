@@ -28,6 +28,13 @@ typedef  struct s_room
     int             link_qnt;
 }               t_room;
 
+typedef struct s_route
+{
+	char	**room;
+	int		len;
+	int 	*route_map;
+}				t_route;
+
 typedef struct  s_lem
 {
     int     ant_qnt;
@@ -44,6 +51,8 @@ typedef struct  s_lem
     char    *routes;
     char    **separate_routes;
     char    ***original_routes;
+	t_route	**route;
+	int 	route_qnt;
 
 }               t_lem;
 
@@ -58,5 +67,5 @@ int validation(t_lem *lem);
 int link_rooms(t_lem *lem, char **res, char **line);
 int find_route(t_room **data, t_lem *lem);
 int check_ants(char *line, t_lem *lem);
-
+int route_realloc(t_lem *lem, t_route *add);
 #endif
