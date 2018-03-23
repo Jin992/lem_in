@@ -12,38 +12,38 @@
 
 #include "lem_in.h"
 
-static  int reset(t_room **data, t_lem *lem)
+static int	reset(t_room **data, t_lem *lem)
 {
-    (*data)->mark = 0;
-    lem->distance--;
-    return (0);
-
+	(*data)->mark = 0;
+	lem->distance--;
+	return (0);
 }
 
-int find_route(t_room **data, t_lem *lem)
+int			find_route(t_room **data, t_lem *lem)
 {
-    int i;
+	int i;
 
-    if (*data == lem->start)
-        return (0);
-    i = 0;
-    if (*data != lem->end)
-    {
-        (*data)->mark = 1;
-        (*data)->distance = ++(lem->distance);
-    }
-    if ((*data)->link == NULL)
-        return (1);
-    if ((*data)->link[i] != 0)
-        while ((*data)->link[i] != 0)
-        {
-            if (((*data)->link)[i] == NULL)
-                return (0);
-            if (((((*data)->link)[i])->mark || ((*data)->link)[i]->distance <= (*data)->distance) && ++i)
-                continue ;
-           find_route(&((*data)->link[i]), lem);
-            ++i;
-        }
-    reset(data, lem);
-    return (0);
+	if (*data == lem->start)
+		return (0);
+	i = 0;
+	if (*data != lem->end)
+	{
+		(*data)->mark = 1;
+		(*data)->distance = ++(lem->distance);
+	}
+	if ((*data)->link == NULL)
+		return (1);
+	if ((*data)->link[i] != 0)
+		while ((*data)->link[i] != 0)
+		{
+			if (((*data)->link)[i] == NULL)
+				return (0);
+			if (((((*data)->link)[i])->mark ||
+					((*data)->link)[i]->distance <= (*data)->distance) && ++i)
+				continue ;
+			find_route(&((*data)->link[i]), lem);
+			++i;
+		}
+	reset(data, lem);
+	return (0);
 }
